@@ -1,0 +1,32 @@
+name: release-please
+
+# Keeps a release PR open on main that bumps VERSION, plugin.json and CHANGELOG.md from the
+# conventional commits since the last tag. Merging it tags vX.Y.Z and creates the GitHub release.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-24.04
+    env:
+      TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+    steps:
+      - if: env.TOKEN == ''
+        run: echo "RELEASE_PLEASE_TOKEN is not set, so no release pull request is opened."
+      - if: env.TOKEN != ''
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ env.TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

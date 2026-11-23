@@ -1,0 +1,29 @@
+{
+  "name": "project-reporting",
+  "version": "0.1.0",
+  "description": "Short reports of a project's finished work. Read git, the tracker, plans and demos for any period, keep one file per work item saying why, before, now and gain, and write a report its readers understand, in your own format and languages.",
+  "author": {
+    "name": "codeonym",
+    "url": "https://github.com/codeonym"
+  },
+  "homepage": "https://github.com/codeonym-oss/project-reporting",
+  "repository": "https://github.com/codeonym-oss/project-reporting",
+  "license": "MIT",
+  "keywords": [
+    "report",
+    "weekly-report",
+    "client",
+    "demo",
+    "changelog",
+    "sprint",
+    "git",
+    "jira",
+    "github",
+    "gitlab"
+  ],
+  "skills": [
+    "./skills/init",
+    "./skills/collect",
+    "./skills/report"
+  ]
+}
