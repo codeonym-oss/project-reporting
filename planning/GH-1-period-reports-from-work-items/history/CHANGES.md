@@ -1,0 +1,2 @@
+- 2026-11-23: story and four tickets drafted after grilling (decisions 001 to 013).
+- 2026-11-23: tracker issue GH-1 created.
