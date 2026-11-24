@@ -25,7 +25,8 @@ Read `<skill-dir>/../../references/structure.md` and `writing.md`. Without `.tra
 7. **Show the report** and take corrections. A correction of fact also goes into the item's Context. After approval,
    write the other languages and check again.
 8. **Publish only if asked or configured, and only after a yes.** Show the title, the place and the attachments first.
-   With no connector, list what to attach by hand. Save the link under `published` in `items.md`.
+   With no connector, list what to attach by hand. Some wikis refuse attachments on a draft: mark each one's place in
+   the text and say so, rather than publish to get around it. Save the link under `published` in `items.md`.
    Other file formats (HTML, PDF, slides, a short message) are made in `exports/` on request, from the approved report.
 
 End with the report's path, and the open Gaps that the person may want to settle. Gaps stay out of the report.

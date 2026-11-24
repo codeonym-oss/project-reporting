@@ -198,6 +198,16 @@ class WindowTest(Temp):
         self.assertEqual((len(found["hotfixes"]), len(found["releases"]), len(found["syncs"])), (1, 1, 1))
         self.assertEqual(found["landed"], [])
 
+    def test_a_release_whose_title_names_one_key_still_brings_them_all(self):
+        self.feature("feature/a", ["SHOP-7 Feat: cart"], "2026-11-10T10:00:00+01:00", "Merge branch 'feature/a'")
+        self.feature("feature/b", ["SHOP-8 Feat: total"], "2026-11-11T10:00:00+01:00", "Merge branch 'feature/b'")
+        self.repo.git("checkout", "-q", "main")
+        self.repo.merge("develop", "Merge branch 'develop' into 'main'\n\nRelease: SHOP-7 and more",
+                        "2026-11-17T10:00:00+01:00")
+        self.repo.push()
+        found = self.repo.window("2026-11-16", "2026-11-23")
+        self.assertEqual(found["releases"][0]["keys"], ["SHOP-7", "SHOP-8"])
+
     def test_a_squashed_release_is_not_a_hotfix(self):
         self.repo.commit("SHOP-7 Feat: cart", "2026-11-10T10:00:00+01:00")
         self.repo.git("checkout", "-q", "main")
@@ -245,7 +255,7 @@ class CheckTest(Temp):
 
     def rows(self, *rows, week=None, start="2026-11-16", end="2026-11-23"):
         folder = (week or self.week).relative_to(self.tracking)
-        table = "".join(f"| {r.split()[0]} | | client | {r.split()[1]} | |\n" for r in rows)
+        table = "".join(f"| {r.split()[0]} | | client | {' '.join(r.split()[1:])} | |\n" for r in rows)
         self.write(f"{folder}/items.md", f"---\nfrom: {start}\nto: {end}\n---\n"
                                          f"| key | landed | format | as | note |\n|---|---|---|---|---|\n{table}")
 
@@ -284,6 +294,17 @@ class CheckTest(Temp):
     def test_presented_before_the_plugin(self):
         self.write("presented-before.md", "- SHOP-2: 2026-11-09\n")
         self.assertProblem("SHOP-2: already presented in presented-before.md")
+        self.write("presented-before.md", "- SHOP-2: 2026-11-15\n")  # the previous week's last day
+        self.assertProblem("SHOP-2: already presented in presented-before.md")
+
+    def test_a_row_presented_with_another(self):
+        self.item("SHOP-3", landed="2026-11-19", before="not found")
+        self.rows("SHOP-1 demo", "SHOP-2 line", "SHOP-3 with SHOP-1")
+        self.assertEqual(self.check(), [])
+        self.rows("SHOP-1 left-out", "SHOP-2 line", "SHOP-3 with SHOP-1")
+        self.assertProblem("SHOP-3: is presented with SHOP-1, which is not itself presented")
+        self.rows("SHOP-1 demo", "SHOP-2 line", "SHOP-3 with")
+        self.assertProblem("SHOP-3: is presented with nothing")
 
     def test_an_unknown_key(self):
         self.report(extra="- More. SHOP-77\n")

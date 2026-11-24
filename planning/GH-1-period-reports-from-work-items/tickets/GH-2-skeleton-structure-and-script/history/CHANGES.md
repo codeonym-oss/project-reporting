@@ -4,3 +4,6 @@
 - 2026-11-23: a key counts as landed from the merge's title when it names one; other keys in its commits are listed as
   mentions. Trying the script on a real history showed mentions counted as work.
 - 2026-11-23: `items.md` gained the row kind `update`, for an item presented before on which new work landed.
+- 2026-11-24: done (the script's cases are tested). Found in the first real report: a release listed only the keys of
+  its title; `items.md` could not show a row under its story (row kind `with`); `presented-before.md` did not say
+  which date to write.

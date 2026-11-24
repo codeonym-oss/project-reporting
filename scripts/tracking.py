@@ -19,7 +19,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 MONTHS = ("january february march april may june july august september october november december").split()
 MR_PATTERNS = (r"Merge pull request #(\d+)", r"See merge request \S*!(\d+)", r"\(#(\d+)\)\s*$")
-PRESENTED = {"demo", "line", "update"}
+PRESENTED = {"demo", "line", "update", "with"}
 ROW_KINDS = PRESENTED | {"production", "left-out"}
 
 
@@ -243,6 +243,11 @@ def window(repo: Path, config: dict, start: date, end: date, fetch: bool = True)
             is_release = bool(entry["_inside"] & main_hashes)
         else:
             is_release = bool(entry["keys"]) and set(entry["keys"]) <= known
+        if is_release and entry["_inside"]:
+            # A release's title rarely names everything in it: its keys are those of the work it brings.
+            brought = [describe(git, c, config) for c in main_line if c["hash"] in entry["_inside"]]
+            entry["keys"] = sorted({key for work in brought for key in work["keys"]} | set(entry["keys"]))
+            entry["mentions"] = sorted(set(entry["mentions"]) - set(entry["keys"]))
         (releases if is_release else hotfixes).append(entry)
     if prod_line and prod_line[0]["hash"] in main_hashes:
         warnings.append(f"{production} follows {integration} by fast-forward: release dates are not in git")
@@ -295,7 +300,8 @@ def load_rows(path: Path) -> list:
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
         if not line.strip().startswith("|") or len(cells) < 4 or cells[0] == "key" or set(cells[0]) <= set("-: "):
             continue
-        rows.append({"key": cells[0], "format": cells[2], "as": cells[3]})
+        how, _, host = cells[3].partition(" ")
+        rows.append({"key": cells[0], "format": cells[2], "as": how, "host": host.strip()})
     return rows
 
 
@@ -336,7 +342,7 @@ def check_report(path: Path, limits: dict, keys, rows: list, items: dict) -> lis
         found = pattern_keys(keys, text)
         errors += [f"{label}: {key} is in the report but not in items.md" for key in sorted(found - allowed)]
         for row in shown if found else []:
-            names = {row["key"], *items.get(row["key"], {}).get("ancestors", [])}
+            names = {row["key"], row["host"], *items.get(row["key"], {}).get("ancestors", [])}
             if keys.fullmatch(row["key"]) and not names & found:
                 errors.append(f"{label}: {row['key']} is in items.md but not in the report")
     for target in re.findall(r"!?\[[^\]]*\]\(<?([^)>]+)>?\)", text):
@@ -397,6 +403,9 @@ def check(tracking: Path, period_dir: Path, name: str, config: dict) -> list:
         if not item:
             errors.append(f"{key}: no such item in .work/")
             continue
+        host = next((r for r in rows if r["key"] == row["host"]), None)
+        if how == "with" and (host is None or host["as"] not in PRESENTED - {"with"}):
+            errors.append(f"{key}: is presented with {row['host'] or 'nothing'}, which is not itself presented")
         landed = split_list(item.get("landed", ""))
         if how in PRESENTED and not any(start <= day < end for day in landed):
             errors.append(f"{key}: did not land in the period (landed: {', '.join(landed) or 'never'})")
