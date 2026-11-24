@@ -1,6 +1,6 @@
 {
   "name": "project-reporting",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Short reports of a project's finished work. Read git, the tracker, plans and demos for any period, keep one file per work item saying why, before, now and gain, and write a report its readers understand, in your own format and languages.",
   "author": {
     "name": "codeonym",
