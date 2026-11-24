@@ -72,7 +72,7 @@ Everything goes in `.tracking/` ([the structure](references/structure.md)):
 `init` asks whether to keep it in git. `.work/` holds internal findings: think twice in a public repository.
 
 **Coming from another report?** List what was already presented in `presented-before.md`, one `- KEY: YYYY-MM-DD` per
-line, so the first weekly reports don't repeat it.
+line (the last day that report covered), so the first weekly reports don't repeat it.
 
 ## Contributing
 

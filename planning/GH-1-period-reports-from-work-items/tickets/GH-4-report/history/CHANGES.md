@@ -1,1 +1,2 @@
 - 2026-11-23: tracker issue GH-4 created.
+- 2026-11-24: some wikis refuse attachments on a draft; `report` says so instead of publishing.

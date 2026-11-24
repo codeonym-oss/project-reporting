@@ -6,7 +6,8 @@ these exact names and headers.
 ```
 .tracking/
 ├── config.md                     the project's settings, written by init
-├── presented-before.md           optional: work presented before this plugin, one "- KEY: YYYY-MM-DD" per line
+├── presented-before.md           optional: work presented before this plugin, one "- KEY: YYYY-MM-DD" per line,
+                                  the date being the last day the report covered
 ├── templates/<format>.md         report formats, yours to edit
 ├── .work/<KEY>-<slug>/item.md    one folder per work item; children nest inside their parent's folder
 ├── weeks/2026/week-47-from-2026-11-16-to-2026-11-22/
@@ -116,16 +117,18 @@ published:                      # links, once published
 | key | landed | format | as | note |
 |---|---|---|---|---|
 | SHOP-12 | 2026-11-18 | client | demo | |
+| SHOP-13 | 2026-11-19 | client | with SHOP-12 | a child, or work told in the same entry |
 | SHOP-14 | 2026-11-19 | client | line | small fix |
 | SHOP-9 | 2026-11-10 | client | production | presented in week 46 |
 | SHOP-15 | 2026-11-19 | client | left-out | planning only |
 ```
 
-One row per item and format, for items that landed themselves (a parent only when work landed under its own key).
+One row per item and format, for items that landed themselves. A finished story can be one row, its children `with` it.
 `as` is:
 
 - `demo`: a demo item, presented for the first time;
 - `line`: one line, presented for the first time;
+- `with <KEY>`: told inside that row's entry, such as the tickets of a story; it needs no entry or key of its own;
 - `update`: presented before, but new work landed in this period; one line;
 - `production`: presented before, reached production in this period; one line;
 - `left-out`: not in the report; the note says why.
